@@ -1,0 +1,91 @@
+.landing-page {
+  background: #fff;
+}
+
+.landing-page .landing-hero {
+  position: relative;
+  overflow: hidden;
+  color: #0b2451;
+  background:
+    linear-gradient(90deg, rgba(234, 244, 255, 0.62) 0, rgba(255, 255, 255, 0) 17%, rgba(255, 255, 255, 0) 83%, rgba(234, 244, 255, 0.32) 100%),
+    linear-gradient(rgba(22, 119, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 119, 255, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 74% 42%, rgba(234, 244, 255, 0.95) 0, rgba(244, 249, 255, 0.62) 22%, rgba(255, 255, 255, 0) 48%),
+    radial-gradient(circle at 8% 92%, rgba(244, 249, 255, 0.95) 0, rgba(255, 255, 255, 0) 38%),
+    #fff;
+  background-size: 48px 48px, 48px 48px, auto, auto, auto;
+}
+
+.landing-page .hero-copy h1 {
+  color: #0b2451;
+}
+
+.landing-page .hero-copy h1 span {
+  color: #1677ff;
+}
+
+.landing-page .hero-copy p {
+  color: #40516b;
+}
+
+.landing-page .eyebrow {
+  color: #1677ff;
+}
+
+.landing-page .eyebrow-dot {
+  background: #1677ff;
+  box-shadow: 0 0 0 5px rgba(22, 119, 255, 0.1);
+}
+
+.landing-page .hero-actions .button-primary {
+  background: #1677ff;
+  color: #fff;
+}
+
+.landing-page .hero-actions .button-ghost {
+  border: 1px solid rgba(22, 119, 255, 0.28);
+  background: rgba(255, 255, 255, 0.75);
+  color: #1677ff;
+  box-shadow: none;
+}
+
+.landing-page .hero-actions .button-ghost:hover {
+  background: #eaf4ff;
+  color: #0b2451;
+}
+
+.landing-page .landing-stats strong {
+  color: #0b2451;
+}
+
+.landing-page .landing-stats strong span {
+  color: #1677ff;
+}
+
+.landing-page .landing-stats small {
+  color: #40516b;
+}
+
+.landing-page .hero-art::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  top: 52px;
+  right: 12px;
+  width: 390px;
+  height: 350px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(234, 244, 255, 0.9) 0, rgba(244, 249, 255, 0.45) 43%, rgba(255, 255, 255, 0) 72%);
+  pointer-events: none;
+}
+
+.landing-page .hero-art > * {
+  position: absolute;
+}
+
+.landing-page .hero-art .laptop,
+.landing-page .hero-art .code-orbit,
+.landing-page .hero-art .book,
+.landing-page .hero-art .plant {
+  z-index: 1;
+}

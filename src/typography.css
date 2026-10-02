@@ -1,0 +1,67 @@
+body {
+  font-size: 14px;
+}
+
+button,
+input {
+  font-size: 14px;
+}
+
+.landing-page h1,
+.auth-page h1,
+.learn-hero h1 {
+  font-size: clamp(28px, 3.4vw, 46px);
+}
+
+.home-welcome-card h1 {
+  font-size: clamp(28px, 2vw, 40px);
+}
+
+.landing-page h2,
+.dashboard-shell h2,
+.auth-page h2 {
+  font-size: clamp(22px, 2.2vw, 30px);
+}
+
+.dashboard-shell h3,
+.landing-page h3,
+.auth-page h3 {
+  font-size: 16px;
+}
+
+.dashboard-shell p,
+.landing-page p,
+.auth-page p {
+  font-size: 14px;
+}
+
+.sidebar nav button,
+.dashboard-search span,
+.profile-name,
+.section-kicker,
+.course-count,
+.learn-area-card span {
+  font-size: 12px;
+}
+
+.button,
+.home-search input,
+.learn-course-card p,
+.learn-area-card span {
+  font-size: 13px;
+}
+
+@media (max-width: 700px) {
+  .landing-page h1,
+  .auth-page h1,
+  .learn-hero h1,
+  .home-welcome-card h1 {
+    font-size: 28px;
+  }
+
+  .dashboard-shell h2,
+  .landing-page h2,
+  .auth-page h2 {
+    font-size: 22px;
+  }
+}

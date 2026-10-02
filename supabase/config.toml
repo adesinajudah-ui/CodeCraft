@@ -1,0 +1,2 @@
+[functions.evaluate-challenge]
+verify_jwt = false

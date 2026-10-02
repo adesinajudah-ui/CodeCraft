@@ -1,0 +1,427 @@
+:root {
+  --editor-light-background: #eef4fb;
+  --editor-light-surface: #f8fbff;
+  --editor-light-surface-elevated: #ffffff;
+  --editor-light-text-primary: #10253f;
+  --editor-light-text-secondary: #365473;
+  --editor-light-text-muted: #5e7896;
+  --editor-light-border: #c7d7e8;
+  --editor-light-border-strong: #a9bfd7;
+  --editor-light-accent: #176ed1;
+  --editor-light-accent-hover: #0f58ad;
+  --editor-light-danger: #b33442;
+  --editor-light-editor-background: #fbfdff;
+  --editor-light-editor-gutter: #edf3fa;
+  --editor-light-preview-background: #f4f8fd;
+}
+
+.dashboard-header.code-editor-header.light {
+  background: var(--editor-light-surface-elevated);
+  border-bottom-color: var(--editor-light-border);
+}
+
+.dashboard-header.code-editor-header.light .editor-header-brand {
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-header.code-editor-header.light .editor-header-brand span {
+  color: var(--editor-light-text-muted);
+}
+
+.code-editor-page.light {
+  color: var(--editor-light-text-primary);
+  background: var(--editor-light-background);
+  --editor-surface: var(--editor-light-surface);
+  --editor-surface-elevated: var(--editor-light-surface-elevated);
+  --editor-text-primary: var(--editor-light-text-primary);
+  --editor-text-secondary: var(--editor-light-text-secondary);
+  --editor-text-muted: var(--editor-light-text-muted);
+  --editor-border: var(--editor-light-border);
+  --editor-border-strong: var(--editor-light-border-strong);
+  --editor-accent: var(--editor-light-accent);
+  --editor-accent-hover: var(--editor-light-accent-hover);
+  --editor-danger: var(--editor-light-danger);
+  --editor-editor-background: var(--editor-light-editor-background);
+  --editor-editor-gutter: var(--editor-light-editor-gutter);
+  --editor-preview-background: var(--editor-light-preview-background);
+}
+
+.code-editor-page.light .editor-toolbar,
+.code-editor-page.light .editor-workspace,
+.code-editor-page.light .editor-console-panel,
+.code-editor-page.light .editor-file-panel,
+.code-editor-page.light .editor-main-panel,
+.code-editor-page.light .editor-preview-panel {
+  background: var(--editor-surface);
+  border-color: var(--editor-border);
+}
+
+.code-editor-page.light .editor-toolbar,
+.code-editor-page.light .editor-console-panel {
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .editor-brand-badge,
+.code-editor-page.light .toolbar-label,
+.code-editor-page.light .editor-toolbar-group,
+.code-editor-page.light .project-selector {
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .toolbar-divider {
+  background: var(--editor-border-strong);
+}
+
+.code-editor-page.light .project-selector:hover,
+.code-editor-page.light .project-selector:focus-visible {
+  background: #e4effb;
+  border-color: var(--editor-border-strong);
+}
+
+.code-editor-page.light .project-selector-chevron {
+  color: var(--editor-accent);
+}
+
+.code-editor-page.light .editor-select-wrap {
+  background: var(--editor-surface-elevated);
+  border-color: var(--editor-border-strong);
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .editor-select-wrap select,
+.code-editor-page.light .editor-select-wrap select option {
+  background: var(--editor-surface-elevated);
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .editor-action {
+  background: #e5eff9;
+  border-color: var(--editor-border-strong);
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .editor-action:hover {
+  background: #d7e8f8;
+  border-color: #87a9ca;
+}
+
+.code-editor-page.light .editor-action.primary {
+  background: linear-gradient(135deg, #1469cf, #1c9b5a);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.project-data-error {
+  margin: 0 0 10px;
+  padding: 9px 12px;
+  border: 1px solid #d35b67;
+  border-radius: 7px;
+  background: rgba(184, 63, 77, .14);
+  color: #ffb5ba;
+  font-size: 12px;
+}
+
+.code-editor-page.light .project-data-error {
+  border-color: #e29aa1;
+  background: #fbe5e7;
+  color: #8e2834;
+}
+
+.code-editor-page.light .project-selector:disabled,
+.code-editor-page.light .editor-action:disabled,
+.code-editor-page.light .project-menu-create:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.code-editor-page.light .panel-header,
+.code-editor-page.light .editor-tabs,
+.code-editor-page.light .console-output,
+.code-editor-page.light .console-status-bar {
+  border-color: var(--editor-border);
+}
+
+.code-editor-page.light .panel-header .section-kicker,
+.code-editor-page.light .section-kicker,
+.code-editor-page.light .console-tabs button,
+.code-editor-page.light .preview-controls button {
+  color: var(--editor-text-secondary);
+}
+
+.code-editor-page.light .project-stack,
+.code-editor-page.light .file-tree-block {
+  background: var(--editor-surface-elevated);
+  border-color: var(--editor-border);
+}
+
+.code-editor-page.light .project-root,
+.code-editor-page.light .empty-file-state strong,
+.code-editor-page.light .empty-editor-state h3,
+.code-editor-page.light .file-item,
+.code-editor-page.light .editor-tab,
+.code-editor-page.light .terminal-log,
+.code-editor-page.light .empty-file-state p,
+.code-editor-page.light .empty-editor-state p {
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .empty-file-state {
+  background: #f4f8fd;
+  border-color: var(--editor-border-strong);
+}
+
+.code-editor-page.light .empty-file-state p,
+.code-editor-page.light .empty-editor-state p,
+.code-editor-page.light .preview-placeholder,
+.code-editor-page.light .delete-modal-warning {
+  color: var(--editor-text-muted);
+}
+
+.code-editor-page.light .file-item-group:hover,
+.code-editor-page.light .file-item-group.is-active {
+  background: #e4effb;
+}
+
+.code-editor-page.light .file-item:hover {
+  background: transparent;
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .file-item-group.is-active .file-item {
+  background: #d9eafb;
+  border-color: #a9c9e8;
+  color: #0b315b;
+}
+
+.code-editor-page.light .file-icon,
+.code-editor-page.light .tab-icon {
+  background: #e5f0fb;
+  border-color: #b6cce2;
+  color: #145b9f;
+}
+
+.code-editor-page.light .file-icon-action {
+  color: #38658f;
+}
+
+.code-editor-page.light .file-icon-action:hover {
+  background: #d8e9f8;
+  border-color: #9dbbd7;
+  color: #123f6d;
+}
+
+.code-editor-page.light .file-icon-action.delete-action:hover {
+  background: #fbe5e7;
+  border-color: #e29aa1;
+  color: var(--editor-danger);
+}
+
+.code-editor-page.light .editor-tabs {
+  background: #f1f6fc;
+}
+
+.code-editor-page.light .editor-tab {
+  color: var(--editor-text-secondary);
+}
+
+.code-editor-page.light .editor-tab.is-active,
+.code-editor-page.light .console-tabs button.is-active {
+  background: var(--editor-surface-elevated);
+  border-color: var(--editor-border);
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .code-editor-surface {
+  background: var(--editor-editor-background);
+  border-color: var(--editor-border);
+}
+
+.code-editor-page.light .line-numbers {
+  background: var(--editor-editor-gutter);
+  border-right-color: var(--editor-border);
+  color: #496887;
+}
+
+.code-editor-page.light .code-textarea {
+  background: var(--editor-editor-background);
+  color: #142f4d;
+  caret-color: #0d5cae;
+  overflow:auto;
+}
+
+.code-editor-page.light .code-textarea::selection {
+  background: #b9d8f5;
+  color: #142f4d;
+}
+
+.code-editor-page.light .preview-frame-wrap,
+.code-editor-page.light .console-output {
+  background: var(--editor-preview-background);
+}
+
+.code-editor-page.light .preview-frame,
+.code-editor-page.light .preview-placeholder {
+  border-color: var(--editor-border-strong);
+}
+
+.code-editor-page.light .preview-placeholder {
+  background: var(--editor-surface-elevated);
+}
+
+.code-editor-page.light .preview-controls button {
+  background: #e5eff9;
+  border-color: var(--editor-border-strong);
+  color: var(--editor-text-secondary);
+}
+
+.code-editor-page.light .preview-controls button:hover,
+.code-editor-page.light .preview-controls button.is-active {
+  background: #d6e8f8;
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .console-tabs button:hover {
+  background: #e4effb;
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .terminal-log.error-log {
+  color: #a52f3d;
+}
+
+.code-editor-page.light .status-pill {
+  background: #d6eafb;
+  color: #164875;
+}
+
+.code-editor-page.light .status-pill.subtle {
+  background: #e5eff9;
+  color: var(--editor-text-secondary);
+}
+
+.code-editor-page.light .project-menu {
+  background: var(--editor-surface-elevated);
+  border-color: var(--editor-border-strong);
+  box-shadow: 0 18px 36px rgba(23, 55, 88, .18);
+}
+
+.code-editor-page.light .project-menu-row:hover,
+.code-editor-page.light .project-menu-row.is-active {
+  background: #e4effb;
+}
+
+.code-editor-page.light .project-menu-item,
+.code-editor-page.light .project-menu-create {
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .project-menu-item:hover {
+  color: var(--editor-text-primary);
+}
+
+.code-editor-page.light .project-menu-create {
+  border-top-color: var(--editor-border);
+  color: var(--editor-accent);
+}
+
+.code-editor-page.light .project-menu-create:hover {
+  background: #e4effb;
+  color: var(--editor-accent-hover);
+}
+
+.project-modal-overlay .project-modal {
+  background: #0c1d33;
+  border-color: #2a527d;
+  color: #edf6ff;
+}
+
+.project-modal-overlay .project-modal input,
+.project-modal-overlay .project-modal select {
+  background: #0d2444;
+  border-color: #22476d;
+  color: #ebf7ff;
+}
+
+.dashboard-shell.light .project-modal-overlay .project-modal {
+  background: var(--editor-light-surface-elevated);
+  border-color: var(--editor-light-border-strong);
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .project-modal h3,
+.dashboard-shell.light .project-modal-overlay .project-modal label span,
+.dashboard-shell.light .project-modal-overlay .project-modal .delete-modal-message,
+.dashboard-shell.light .project-modal-overlay .project-modal .delete-modal-message strong {
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .project-modal input,
+.dashboard-shell.light .project-modal-overlay .project-modal select {
+  background: #ffffff;
+  border-color: var(--editor-light-border-strong);
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .project-modal input::placeholder {
+  color: var(--editor-light-text-muted);
+}
+
+.dashboard-shell.light .project-modal-overlay .modal-close {
+  color: var(--editor-light-text-secondary);
+}
+
+.dashboard-shell.light .project-modal-overlay .modal-close:hover {
+  background: #e4effb;
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .template-option {
+  background: #f1f6fc;
+  border-color: var(--editor-light-border);
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .template-option span {
+  color: var(--editor-light-text-secondary);
+}
+
+.dashboard-shell.light .project-modal-overlay .template-option:hover,
+.dashboard-shell.light .project-modal-overlay .template-option.is-active {
+  background: #e0eefb;
+  border-color: #7db0dc;
+}
+
+.dashboard-shell.light .project-modal-overlay .editor-action:not(.primary):not(.destructive) {
+  background: #e5eff9;
+  border-color: var(--editor-light-border-strong);
+  color: var(--editor-light-text-primary);
+}
+
+.dashboard-shell.light .project-modal-overlay .editor-action:not(.primary):not(.destructive):hover {
+  background: #d7e8f8;
+}
+
+.dashboard-shell.light .project-modal-overlay .editor-action.primary {
+  background: #176ed1;
+  color: #ffffff;
+}
+
+.dashboard-shell.light .project-modal-overlay .delete-modal-warning {
+  color: var(--editor-light-text-muted);
+}
+
+.dashboard-shell.light .project-modal-overlay .editor-action.destructive {
+  background: var(--editor-light-danger);
+  border-color: var(--editor-light-danger);
+  color: #ffffff;
+}
+
+.dashboard-shell.light .project-modal-overlay .editor-action.destructive:hover {
+  background: #922b37;
+}
+
+@media (max-width: 640px) {
+  .code-editor-page.light .project-menu {
+    max-width: calc(100vw - 32px);
+  }
+}

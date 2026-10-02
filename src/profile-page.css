@@ -1,0 +1,29 @@
+.profile-shell .profile-page-title{color:var(--ink);font-size:14px;font-weight:800}
+.profile-page-content{max-width:980px;padding-top:28px}
+.profile-identity{display:flex;align-items:center;gap:20px;padding:22px 24px;border:1px solid var(--line);border-radius:15px;background:#fff}
+.profile-identity-avatar{display:grid;place-items:center;flex:0 0 76px;width:76px;height:76px;overflow:hidden;border-radius:50%;background:#2388ff;color:#fff;font-size:24px;font-weight:800}
+.profile-identity-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-identity-details{min-width:0}
+.profile-identity-details h1{margin:0;color:var(--ink);font-size:24px;line-height:1.25;overflow-wrap:anywhere}
+.profile-identity-details p{margin:5px 0 0;color:#47627d;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.profile-identity-details>span{display:block;margin-top:5px;color:#8191a3;font-size:12px;overflow-wrap:anywhere}
+.profile-posts-section{margin-top:28px}
+.profile-posts-heading{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+.profile-posts-heading h2{margin:0;color:var(--ink);font-size:20px}
+.profile-posts-heading>span{display:grid;place-items:center;min-width:23px;height:23px;padding:0 6px;border-radius:12px;background:#e8f2fd;color:#2876bf;font-size:11px;font-weight:800}
+.profile-post-feed{gap:16px}
+.profile-posts-loading,.profile-empty-state{padding:28px 24px;border:1px solid var(--line);border-radius:12px;background:#fff;color:#718199;text-align:center;font-size:13px}
+.profile-empty-state h3{margin:0;color:var(--ink);font-size:17px}
+.profile-empty-state p{margin:8px 0 18px;line-height:1.6}
+.profile-empty-state .button{display:inline-flex;align-items:center;gap:8px}
+@media(max-width:700px){
+  .profile-page-content{padding:17px}
+  .profile-identity{gap:14px;padding:18px 16px}
+  .profile-identity-avatar{flex-basis:60px;width:60px;height:60px;font-size:20px}
+  .profile-identity-details h1{font-size:20px}
+  .profile-identity-details p{font-size:12px}
+  .profile-identity-details>span{font-size:11px}
+  .profile-posts-section{margin-top:22px}
+  .profile-posts-heading h2{font-size:18px}
+  .profile-post-feed .community-post{min-width:0}
+}

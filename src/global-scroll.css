@@ -1,0 +1,527 @@
+:root {
+  --app-sidebar-width: 244px;
+  --app-header-height: 72px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.dashboard-shell {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dashboard-shell .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--app-sidebar-width);
+  height: 100vh;
+  z-index: 100;
+}
+
+.dashboard-shell .dashboard-main {
+  height: 100vh;
+  margin-left: var(--app-sidebar-width);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dashboard-shell .dashboard-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--app-sidebar-width);
+  z-index: 90;
+}
+
+.dashboard-shell .dashboard-main > :not(.dashboard-header) {
+  height: calc(100vh - var(--app-header-height));
+  margin-top: var(--app-header-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (min-width: 701px) and (max-width: 1050px) {
+  :root {
+    --app-sidebar-width: 210px;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-shell {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dashboard-shell .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+  }
+
+  .dashboard-shell .dashboard-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    margin-left: 0;
+  }
+
+  .dashboard-shell .dashboard-header {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    flex: 0 0 60px;
+  }
+
+  .dashboard-shell .dashboard-main > :not(.dashboard-header) {
+    height: auto;
+    min-height: 0;
+    margin-top: 0;
+    flex: 1;
+  }
+}
+
+.dashboard-shell:has(.code-editor-page) .dashboard-main > .code-editor-page {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: calc(100vh - var(--app-header-height));
+  min-height: 0;
+  max-height: calc(100vh - var(--app-header-height));
+  margin-top: var(--app-header-height);
+  padding: 10px 12px;
+  overflow: hidden;
+}
+
+.code-editor-page .editor-toolbar,
+.code-editor-page .project-data-error {
+  flex: 0 0 auto;
+}
+
+.code-editor-page .editor-workspace {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: minmax(165px, 220px) minmax(0, 1.2fr) minmax(240px, .9fr);
+  grid-template-rows: minmax(0, 1fr);
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.code-editor-page .editor-file-panel,
+.code-editor-page .editor-main-panel,
+.code-editor-page .editor-preview-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.code-editor-page .project-stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.code-editor-page .editor-main-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor-page .editor-tabs {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.code-editor-page .code-editor-surface {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 0;
+}
+
+.code-editor-page .code-textarea {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+.code-editor-page .editor-preview-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor-page .preview-frame-wrap {
+  flex: 1 1 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.code-editor-page .preview-frame,
+.code-editor-page .preview-placeholder {
+  flex: 0 0 auto;
+  min-height: 100%;
+}
+
+.code-editor-page .editor-console-panel {
+  display: flex;
+  flex: 0 0 clamp(128px, 22vh, 210px);
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.code-editor-page .console-tabs,
+.code-editor-page .console-status-bar {
+  flex: 0 0 auto;
+}
+
+.code-editor-page .console-output {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.mobile-editor-bar,
+.mobile-editor-menu {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .code-editor-page .editor-workspace {
+    grid-template-columns: minmax(160px, 200px) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, .85fr);
+  }
+
+  .code-editor-page .editor-preview-panel {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 800px) {
+  .code-editor-page .editor-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(72px, .55fr) minmax(90px, 1fr) minmax(96px, .85fr);
+    overflow: auto;
+  }
+
+  .code-editor-page .editor-file-panel,
+  .code-editor-page .editor-preview-panel {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-shell:has(.code-editor-page) .dashboard-main > .code-editor-page {
+    flex: 1 1 0;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin-top: 0;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .dashboard-shell:has(.code-editor-page) > .sidebar {
+    padding: 10px 12px;
+  }
+
+  .dashboard-shell:has(.code-editor-page) > .sidebar nav {
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .dashboard-shell:has(.code-editor-page) > .sidebar nav button {
+    min-height: 36px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .code-editor-page .editor-toolbar {
+    display: none;
+  }
+
+  .code-editor-page .mobile-editor-bar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+    padding: 0 0 8px;
+  }
+
+  .mobile-project-disclosure {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .mobile-project-disclosure summary {
+    min-height: 38px;
+    overflow: hidden;
+    padding: 10px 12px;
+    border: 1px solid #244b78;
+    border-radius: 8px;
+    background: #0b1d34;
+    color: #e5eef9;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .mobile-project-list {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    z-index: 30;
+    width: min(330px, calc(100vw - 32px));
+    max-height: min(45vh, 340px);
+    overflow: auto;
+    padding: 6px;
+    border: 1px solid #244b78;
+    border-radius: 9px;
+    background: #0c213b;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, .32);
+  }
+
+  .mobile-project-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    border-radius: 6px;
+  }
+
+  .mobile-project-row.is-active {
+    background: #153b63;
+  }
+
+  .mobile-project-select,
+  .mobile-project-create {
+    min-width: 0;
+    min-height: 38px;
+    padding: 8px 10px;
+    background: transparent;
+    color: #e5eef9;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .mobile-project-select {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-project-action {
+    display: grid;
+    flex: 0 0 34px;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: transparent;
+    color: #9fc2e2;
+  }
+
+  .mobile-project-action:hover {
+    background: #20476f;
+    color: #fff;
+  }
+
+  .mobile-project-create {
+    width: 100%;
+    margin-top: 4px;
+    border-top: 1px solid #244b78;
+    color: #7ec0ff;
+    font-weight: 700;
+  }
+
+  .mobile-tools-toggle {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #244b78;
+    border-radius: 8px;
+    background: #12375c;
+    color: #e5eef9;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .code-editor-page .mobile-editor-menu {
+    display: grid;
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    max-height: 34vh;
+    overflow: auto;
+    margin-bottom: 8px;
+    padding: 10px;
+    border: 1px solid #244b78;
+    border-radius: 9px;
+    background: #0b1d34;
+  }
+
+  .mobile-language-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-language-select select {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .mobile-editor-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .mobile-editor-actions .editor-action {
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 6px;
+    white-space: normal;
+  }
+
+  .code-editor-page .editor-workspace {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .code-editor-page .editor-file-panel {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    width: 100%;
+    max-height: min(22vh, 170px);
+    border: 1px solid #18355d;
+    border-radius: 8px;
+  }
+
+  .code-editor-page .editor-file-panel .panel-header {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 6px 10px;
+  }
+
+  .code-editor-page .project-stack {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .code-editor-page .editor-main-panel {
+    display: none;
+  }
+
+  .code-editor-page .editor-preview-panel {
+    display: flex;
+    flex: 1 0 280px;
+    flex-direction: column;
+    width: 100%;
+    min-height: 280px;
+    grid-column: auto;
+    border: 1px solid #18355d;
+    border-radius: 8px;
+  }
+
+  .code-editor-page .preview-header {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 9px 10px;
+  }
+
+  .code-editor-page .preview-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: 100%;
+  }
+
+  .code-editor-page .preview-controls button {
+    min-height: 30px;
+    padding: 5px 7px;
+    font-size: 10px;
+  }
+
+  .code-editor-page .preview-frame-wrap {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    min-height: 230px;
+    padding: 8px;
+    overflow: auto;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .code-editor-page .preview-frame,
+  .code-editor-page .preview-placeholder {
+    width: 100%;
+    max-width: 100%;
+    height: 320px;
+    min-height: 320px;
+  }
+
+  .code-editor-page .preview-frame-wrap.mobile .preview-frame {
+    max-width: min(100%, 390px);
+  }
+
+  .code-editor-page .editor-console-panel {
+    flex: 0 0 128px;
+    min-height: 128px;
+    border-radius: 8px;
+  }
+
+  .code-editor-page .console-tabs {
+    gap: 4px;
+    padding: 8px 8px 0;
+  }
+
+  .code-editor-page .console-tabs button {
+    min-height: 32px;
+    padding: 6px 9px;
+    font-size: 10px;
+  }
+
+  .code-editor-page .console-output {
+    padding: 8px;
+  }
+
+  .code-editor-page .console-status-bar {
+    padding: 6px 8px;
+  }
+}

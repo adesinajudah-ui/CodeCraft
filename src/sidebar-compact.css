@@ -1,0 +1,28 @@
+.sidebar{padding:20px 14px 12px}
+.sidebar .brand{margin-bottom:15px}
+.sidebar nav{gap:4px}
+.sidebar nav button{min-height:36px;padding:8px 10px;border-radius:5px;font-size:11px;gap:10px}
+.sidebar nav button span{font-size:15px}
+.sidebar-promo{padding:12px;border-radius:6px}
+.sidebar-promo .promo-spark{font-size:18px}
+.sidebar-promo h3{margin:7px 0 4px;font-size:11px}
+.sidebar-promo p{margin-bottom:9px;font-size:9px;line-height:1.4}
+.sidebar-promo .button{padding:8px 10px;font-size:10px}
+.sidebar-foot{margin:12px 9px 0;font-size:8px}
+.feature-sidebar{padding:20px 14px 12px}
+.feature-sidebar>strong{padding:8px 10px 15px}
+.feature-sidebar nav{gap:4px}
+.feature-sidebar nav button{min-height:36px;padding:8px 10px;border-radius:5px;font-size:11px}
+
+@media(max-width:700px){
+  .sidebar{padding:12px}
+  .sidebar .brand{margin:0}
+  .sidebar nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:10px;overflow:visible}
+  .sidebar nav button{min-width:0;min-height:38px;padding:7px 6px;justify-content:flex-start;gap:6px;white-space:normal;font-size:10px;line-height:1.15}
+  .sidebar nav button span{width:auto;flex:0 0 15px;font-size:14px}
+  .sidebar-promo,.sidebar-foot{display:none}
+  .feature-sidebar{padding:10px 12px}
+  .feature-sidebar>strong{padding:5px 8px 9px}
+  .feature-sidebar nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;overflow:visible}
+  .feature-sidebar nav button{min-width:0;min-height:38px;padding:7px 6px;white-space:normal;font-size:10px;line-height:1.15}
+}
