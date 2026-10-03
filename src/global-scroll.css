@@ -55,9 +55,29 @@ body,
 }
 
 @media (max-width: 700px) {
+  html,
+  body,
+  #root {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+  }
+
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
   .dashboard-shell {
     display: flex;
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: visible;
   }
 
   .dashboard-shell .sidebar {
@@ -72,8 +92,9 @@ body,
     flex: 1;
     flex-direction: column;
     height: auto;
-    min-height: 0;
+    min-height: 100%;
     margin-left: 0;
+    overflow: visible;
   }
 
   .dashboard-shell .dashboard-header {
@@ -89,6 +110,7 @@ body,
     min-height: 0;
     margin-top: 0;
     flex: 1;
+    overflow: visible;
   }
 }
 
@@ -230,12 +252,12 @@ body,
     flex: 1 1 0;
     width: 100%;
     height: auto;
-    min-height: 0;
+    min-height: calc(100vh - var(--app-header-height));
+    min-height: calc(100dvh - var(--app-header-height));
     max-height: none;
     margin-top: 0;
     padding: 8px;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: visible;
   }
 
   .dashboard-shell:has(.code-editor-page) > .sidebar {

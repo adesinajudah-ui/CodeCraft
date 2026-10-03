@@ -528,6 +528,11 @@ body:has(.account-suspended),
 @media (max-width: 700px) {
   .dashboard-shell .dashboard-main > .dashboard-header {
     box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1100;
     display: grid;
     grid-template-columns: 40px minmax(0, 1fr) auto;
     grid-template-areas: "menu brand actions";
@@ -535,12 +540,17 @@ body:has(.account-suspended),
     align-items: center;
     column-gap: 8px;
     row-gap: 6px;
-    width: 100%;
+    width: auto;
     min-width: 0;
     min-height: 60px;
     height: auto;
     flex: 0 0 auto;
-    padding: 10px;
+    padding: 9px 10px;
+    background: #ffffff;
+  }
+
+  .dashboard-shell .dashboard-main {
+    padding-top: 60px;
   }
 
   .dashboard-header > .mobile-navigation-trigger {
@@ -574,12 +584,19 @@ body:has(.account-suspended),
   }
 
   .dashboard-shell .dashboard-main > .dashboard-header:has(> .mobile-navigation-brand--search-enabled) {
-    grid-template-areas:
-      "menu brand actions"
-      "search search search";
-    grid-template-rows: 40px 40px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas: "menu search actions";
+    grid-template-rows: 40px;
+    min-height: 60px;
+    padding: 9px 10px;
+  }
+
+  .dashboard-header > .mobile-navigation-brand--search-enabled {
+    display: none;
+  }
+
+  .dashboard-header.code-editor-header:not(.light) {
+    background: #031a35;
   }
 
   .dashboard-header > .global-header-search,
