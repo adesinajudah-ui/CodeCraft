@@ -16,6 +16,14 @@ body:has(.account-suspended),
   display: none;
 }
 
+.mobile-navigation-root {
+  display: contents;
+}
+
+.mobile-navigation-brand {
+  display: none;
+}
+
 .landing-page {
   min-height: 100vh;
 }
@@ -122,15 +130,9 @@ body:has(.account-suspended),
     display: none;
   }
 
-  .dashboard-shell .dashboard-main > .dashboard-header {
-    padding-left: 58px;
-  }
-
   .mobile-navigation-trigger {
-    position: fixed;
-    z-index: 1202;
-    top: 10px;
-    left: 10px;
+    position: static;
+    z-index: auto;
     display: grid;
     width: 40px;
     height: 40px;
@@ -306,10 +308,10 @@ body:has(.account-suspended),
     margin: 0;
   }
 
-  .dashboard-header:has(> .global-header-search) > .dashboard-search,
-  .dashboard-header:has(> .global-header-search) > .challenge-header-title,
-  .dashboard-header:has(> .global-header-search) > .editor-header-brand,
-  .dashboard-header:has(> .global-header-search) > .profile-page-title {
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .dashboard-search,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .challenge-header-title,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .editor-header-brand,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .profile-page-title {
     display: none;
   }
 
@@ -367,10 +369,10 @@ body:has(.account-suspended),
     display: block;
   }
 
-  .dashboard-header:has(> .global-header-search) > .dashboard-search,
-  .dashboard-header:has(> .global-header-search) > .challenge-header-title,
-  .dashboard-header:has(> .global-header-search) > .editor-header-brand,
-  .dashboard-header:has(> .global-header-search) > .profile-page-title {
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .dashboard-search,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .challenge-header-title,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .editor-header-brand,
+  .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .profile-page-title {
     display: none;
   }
 
@@ -521,4 +523,82 @@ body:has(.account-suspended),
     width: 100%;
     min-width: 0;
   }
+}
+
+@media (max-width: 700px) {
+  .dashboard-shell .dashboard-main > .dashboard-header {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas: "menu brand actions";
+    grid-template-rows: 40px;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 6px;
+    width: 100%;
+    min-width: 0;
+    min-height: 60px;
+    height: auto;
+    flex: 0 0 auto;
+    padding: 10px;
+  }
+
+  .dashboard-header > .mobile-navigation-trigger {
+    grid-area: menu;
+  }
+
+  .dashboard-header > .mobile-navigation-brand {
+    grid-area: brand;
+    display: block;
+    overflow: hidden;
+    color: #10233d;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dashboard-header.code-editor-header:not(.light) > .mobile-navigation-brand {
+    color: #ffffff;
+  }
+
+  .dashboard-header > .profile-actions {
+    grid-area: actions;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .dashboard-shell .dashboard-main > .dashboard-header:has(> .mobile-navigation-brand--search-enabled) {
+    grid-template-areas:
+      "menu brand actions"
+      "search search search";
+    grid-template-rows: 40px 40px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .dashboard-header > .global-header-search,
+  .dashboard-header > .dashboard-course-search,
+  .dashboard-header > .community-search {
+    grid-area: search;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+.dashboard-shell .dashboard-main > .dashboard-header:not(:has(> .mobile-navigation-brand--search-enabled)) > .global-header-search,
+.dashboard-shell .dashboard-main > .dashboard-header:not(:has(> .mobile-navigation-brand--search-enabled)) > .dashboard-course-search,
+.dashboard-shell .dashboard-main > .dashboard-header:not(:has(> .mobile-navigation-brand--search-enabled)) > .community-search {
+  display: none;
+}
+
+.dashboard-shell .dashboard-main > .dashboard-header:has(> .mobile-navigation-brand--search-enabled) > .global-header-search {
+  display: block;
 }
