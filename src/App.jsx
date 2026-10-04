@@ -26,6 +26,8 @@ import { ChallengeSidebarContext } from './ChallengeSystem'
 import { configureSupabaseAccessToken, createCommunityPost, deleteCommunityPost, ensureProfileFromClerk, fetchCommunityPosts, fetchPostComments, fetchPublicSiteSettings, fetchRecentReposts, getClerkUserId, hasSupabaseConfig, isUserAccountActive, isUserAdmin, supabase, togglePostLike, togglePostRepost, updateCommunityPost, updateUserAdminRole } from './lib/supabase'
 import { buildCourseProgress, buildOverallProgress, buildQuizStats, buildRecentActivityFromEvents, buildStreak, formatActivityDate, selectContinueLearning } from './lib/home-progress'
 import { fetchHomeDashboard } from './lib/home-progress-data'
+import { CourseOverview, LessonWorkspace, computeCourseProgress, parseCourseRoute, buildEngineDashboardRows, searchLearningEngine, useLearning } from './learn/index.js'
+import { resolveCourseRoute, findCourseByTitle, getCourse } from './courses/index.js'
 import './responsive-layout.css'
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -252,7 +254,14 @@ const navigate = (path) => {
   window.dispatchEvent(new PopStateEvent('popstate'))
 }
 
+// Course cards open the interactive course engine when the title maps to a
+// built-in course; otherwise they keep the existing search behaviour.
+const openCourse = (title) => {
+  navigate(resolveCourseRoute(title) || `/learn?search=${encodeURIComponent(title)}`)
+}
+
 const getActiveRoute = (route) => {
+  if (route && route.startsWith('/learn')) return 'learn'
   switch (route) {
     case '/dashboard':
       return 'dashboard'
@@ -464,7 +473,7 @@ function SidebarNavIcon({ type }) {
   }
 }
 
-function Sidebar({ active, setActive }) {
+export function Sidebar({ active, setActive }) {
   const items = [
     { label: 'Home', route: '/', id: 'home', icon: 'home' },
     { label: 'Learn', route: '/learn', id: 'learn', icon: 'learn' },
@@ -561,15 +570,23 @@ function HomePage({ active, setActive }) {
   const { user } = useUser()
   const firstName = user?.firstName || user?.fullName || 'Learner'
   const { loading: dashboardLoading, data: dashboardData } = useHomeDashboardData(user?.id)
+  const { state: engineState } = useLearning()
 
   const dashboard = useMemo(() => {
     if (!dashboardData) return null
-    const { byCourse } = buildCourseProgress(dashboardData.courses, dashboardData.lessons, dashboardData.lessonProgress)
+    const engine = buildEngineDashboardRows(engineState)
+    const mergedData = {
+      ...dashboardData,
+      courses: [...engine.courses, ...dashboardData.courses],
+      lessons: [...engine.lessons, ...dashboardData.lessons],
+      lessonProgress: [...engine.lessonProgress, ...dashboardData.lessonProgress],
+    }
+    const { byCourse } = buildCourseProgress(mergedData.courses, mergedData.lessons, mergedData.lessonProgress)
     const overall = buildOverallProgress(byCourse)
     const continueLearning = selectContinueLearning(byCourse)
     const quizStats = buildQuizStats(dashboardData.quizAttempts)
     const activityDates = []
-    for (const row of dashboardData.lessonProgress) if (row.completed_at) activityDates.push(row.completed_at)
+    for (const row of mergedData.lessonProgress) if (row.completed_at) activityDates.push(row.completed_at)
     for (const attempt of dashboardData.quizAttempts) if (attempt.status !== 'in_progress' && attempt.submitted_at) activityDates.push(attempt.submitted_at)
     for (const completion of dashboardData.challengeCompletions) if (completion.completed_at) activityDates.push(completion.completed_at)
     return {
@@ -577,13 +594,13 @@ function HomePage({ active, setActive }) {
       continueLearning,
       quizStats,
       streak: buildStreak(activityDates),
-      recentActivity: buildRecentActivityFromEvents(buildHomeActivityEvents(dashboardData), 6),
+      recentActivity: buildRecentActivityFromEvents(buildHomeActivityEvents(mergedData), 6),
       xp: Number(dashboardData.progressRow?.xp) || 0,
       certificates: dashboardData.certificates.length,
       challengeCompletions: dashboardData.challengeCompletions.length,
       hasErrors: Object.values(dashboardData.errors || {}).some(Boolean),
     }
-  }, [dashboardData])
+  }, [dashboardData, engineState])
 
   const loadingStat = dashboardLoading || !dashboard
   const continueEntry = dashboard?.continueLearning || null
@@ -591,7 +608,14 @@ function HomePage({ active, setActive }) {
   const continueLesson = continueEntry?.lesson || null
   const continueProgress = continueEntry ? continueEntry.entry.progressPct : 0
   const continueLessonNumber = continueLesson && continueEntry ? (continueLesson.position ?? 0) + 1 : 0
-  const openCourseHref = (course, lesson) => `/learn?course=${course.id}${lesson ? `&lesson=${lesson.id}` : ''}`
+  const openCourseHref = (course, lesson) => {
+    const engineCourse = getCourse(course.id)
+    if (engineCourse) {
+      const lessonId = lesson ? String(lesson.id).split('::').pop() : null
+      return lessonId ? `/learn/course/${engineCourse.id}/lesson/${lessonId}` : `/learn/course/${engineCourse.id}`
+    }
+    return `/learn?course=${course.id}${lesson ? `&lesson=${lesson.id}` : ''}`
+  }
 
   const quickActions = [
     { title: 'Explore Courses', description: 'Find something new to learn.', icon: '📚', route: '/learn' },
@@ -733,18 +757,21 @@ function HomePage({ active, setActive }) {
 
 function LearningPathDetails({ path, selectedTrack, onTrackChange, searchQuery }) {
   const courseCount = path.tracks.reduce((total, track) => total + track.courses.length, 0)
+  const { state: engineState } = useLearning()
   const resolveCourse = (title) => {
     const catalogCourse = courseCatalog.find((course) => course.title === title)
     const progressCourse = learningCourses.find((course) => course.title === title)
+    const engineCourse = findCourseByTitle(title)
+    const engineProgress = engineCourse ? computeCourseProgress(engineCourse, engineState) : null
     const [defaultIcon, defaultColor, defaultDifficulty, defaultLessons] = pathCourseDefaults[title] || ['++', path.color, 'Beginner', 8]
     return {
       title,
-      description: catalogCourse?.description || `Build practical ${title} skills through guided lessons and projects.`,
-      icon: catalogCourse?.icon || defaultIcon,
-      color: catalogCourse?.color || defaultColor,
-      difficulty: catalogCourse?.difficulty || defaultDifficulty,
-      lessons: catalogCourse?.lessons || defaultLessons,
-      progress: progressCourse?.progress || 0,
+      description: engineCourse?.description || catalogCourse?.description || `Build practical ${title} skills through guided lessons and projects.`,
+      icon: engineCourse?.icon || catalogCourse?.icon || defaultIcon,
+      color: engineCourse?.color || catalogCourse?.color || defaultColor,
+      difficulty: engineCourse?.difficulty || catalogCourse?.difficulty || defaultDifficulty,
+      lessons: engineProgress?.totalLessons || catalogCourse?.lessons || defaultLessons,
+      progress: engineProgress ? engineProgress.percentage : progressCourse?.progress || 0,
     }
   }
 
@@ -760,23 +787,26 @@ function LearningPathDetails({ path, selectedTrack, onTrackChange, searchQuery }
     return <section className="selected-path-details"><div className="selected-path-header"><div><span className="section-kicker">SELECTED PATH</span><h2>{path.title}</h2><p>{path.description}</p></div><strong>{courseCount} Courses</strong></div><div className="overview-track-grid web-track-options">{path.tracks.map((track) => <article className="overview-track-card" key={track.id}><span className="section-kicker">{track.courses.length} COURSES</span><h3>{track.tab || track.title}</h3><strong>{track.description}</strong><button type="button" className="button button-small" onClick={() => onTrackChange(track.id)}>Explore {track.tab || track.title} <span>→</span></button></article>)}</div></section>
   }
 
-  return <section className="selected-path-details"><div className="selected-path-header"><div><span className="section-kicker">SELECTED PATH</span><h2>{path.title}</h2><p>{path.description}</p></div><strong>{courseCount} Courses</strong></div><div className="learn-track-tabs"><button type="button" className={selectedTrack === 'Overview' ? 'is-active' : ''} onClick={() => onTrackChange('Overview')}>Overview</button>{path.tracks.map((track) => <button type="button" className={selectedTrack === track.id ? 'is-active' : ''} key={track.id} onClick={() => onTrackChange(track.id)}>{track.tab || track.title}</button>)}</div>{selectedTrack === 'Overview' ? <div className="path-overview-content"><div className="path-roadmap"><span className="section-kicker">RECOMMENDED JOURNEY</span><h3>Start Your {path.title} Journey</h3><div className="roadmap-steps">{path.roadmap.map((step, index) => <div className="roadmap-step" key={step}><span>{index + 1}</span><strong>{step}</strong>{index < path.roadmap.length - 1 && <i>↓</i>}</div>)}</div></div><div className="overview-track-grid">{overviewTrackCards.map((track) => <article className="overview-track-card" key={track.id}><span className="section-kicker">{track.courseCount} COURSES</span><h3>{track.title}</h3><strong>{track.description}</strong><p>{track.progress > 0 ? `${track.progress}% path progress` : 'A guided route for your next skills.'}</p><button type="button" className="button button-small" onClick={() => onTrackChange(track.id)}>{track.progress > 0 ? 'Continue' : 'Start Learning'} <span>→</span></button></article>)}</div></div> : <div className="path-course-grid">{visibleCourses.map((course) => <article className="path-course-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p>{course.progress > 0 && <div className="path-course-progress"><span style={{ width: `${course.progress}%` }} /></div>}<button type="button" className="button button-small" onClick={() => navigate(`/learn?search=${encodeURIComponent(course.title)}`)}>{course.progress >= 100 ? 'Completed' : course.progress > 0 ? 'Continue' : 'Start Course'} <span>→</span></button></div></article>)}{visibleCourses.length === 0 && <div className="learn-empty-state"><strong>No matching courses found</strong><p>Try another search term.</p></div>}</div>}</section>
+  return <section className="selected-path-details"><div className="selected-path-header"><div><span className="section-kicker">SELECTED PATH</span><h2>{path.title}</h2><p>{path.description}</p></div><strong>{courseCount} Courses</strong></div><div className="learn-track-tabs"><button type="button" className={selectedTrack === 'Overview' ? 'is-active' : ''} onClick={() => onTrackChange('Overview')}>Overview</button>{path.tracks.map((track) => <button type="button" className={selectedTrack === track.id ? 'is-active' : ''} key={track.id} onClick={() => onTrackChange(track.id)}>{track.tab || track.title}</button>)}</div>{selectedTrack === 'Overview' ? <div className="path-overview-content"><div className="path-roadmap"><span className="section-kicker">RECOMMENDED JOURNEY</span><h3>Start Your {path.title} Journey</h3><div className="roadmap-steps">{path.roadmap.map((step, index) => <div className="roadmap-step" key={step}><span>{index + 1}</span><strong>{step}</strong>{index < path.roadmap.length - 1 && <i>↓</i>}</div>)}</div></div><div className="overview-track-grid">{overviewTrackCards.map((track) => <article className="overview-track-card" key={track.id}><span className="section-kicker">{track.courseCount} COURSES</span><h3>{track.title}</h3><strong>{track.description}</strong><p>{track.progress > 0 ? `${track.progress}% path progress` : 'A guided route for your next skills.'}</p><button type="button" className="button button-small" onClick={() => onTrackChange(track.id)}>{track.progress > 0 ? 'Continue' : 'Start Learning'} <span>→</span></button></article>)}</div></div> : <div className="path-course-grid">{visibleCourses.map((course) => <article className="path-course-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p>{course.progress > 0 && <div className="path-course-progress"><span style={{ width: `${course.progress}%` }} /></div>}<button type="button" className="button button-small" onClick={() => openCourse(course.title)}>{course.progress >= 100 ? 'Completed' : course.progress > 0 ? 'Continue' : 'Start Course'} <span>→</span></button></div></article>)}{visibleCourses.length === 0 && <div className="learn-empty-state"><strong>No matching courses found</strong><p>Try another search term.</p></div>}</div>}</section>
 }
 
 function LearningPathDetailsLayout({ path, selectedTrack, onTrackChange, searchQuery }) {
   const courseCount = path.tracks.reduce((total, track) => total + track.courses.length, 0)
+  const { state: engineState } = useLearning()
   const resolveCourse = (title) => {
     const catalogCourse = courseCatalog.find((course) => course.title === title)
     const progressCourse = learningCourses.find((course) => course.title === title)
+    const engineCourse = findCourseByTitle(title)
+    const engineProgress = engineCourse ? computeCourseProgress(engineCourse, engineState) : null
     const [defaultIcon, defaultColor, defaultDifficulty, defaultLessons] = pathCourseDefaults[title] || ['++', path.color, 'Beginner', 8]
     return {
       title,
-      description: catalogCourse?.description || `Build practical ${title} skills through guided lessons and projects.`,
-      icon: catalogCourse?.icon || defaultIcon,
-      color: catalogCourse?.color || defaultColor,
-      difficulty: catalogCourse?.difficulty || defaultDifficulty,
-      lessons: catalogCourse?.lessons || defaultLessons,
-      progress: progressCourse?.progress || 0,
+      description: engineCourse?.description || catalogCourse?.description || `Build practical ${title} skills through guided lessons and projects.`,
+      icon: engineCourse?.icon || catalogCourse?.icon || defaultIcon,
+      color: engineCourse?.color || catalogCourse?.color || defaultColor,
+      difficulty: engineCourse?.difficulty || catalogCourse?.difficulty || defaultDifficulty,
+      lessons: engineProgress?.totalLessons || catalogCourse?.lessons || defaultLessons,
+      progress: engineProgress ? engineProgress.percentage : progressCourse?.progress || 0,
     }
   }
 
@@ -788,7 +818,7 @@ function LearningPathDetailsLayout({ path, selectedTrack, onTrackChange, searchQ
     onTrackChange(trackId)
   }
 
-  return <section className="selected-path-details"><div className="selected-path-header"><div><span className="section-kicker">SELECTED PATH</span><h2>{path.title}</h2><p>{path.description}</p></div><strong>{courseCount} Courses</strong></div><div className="learn-track-layout"><nav className="learn-track-navigation" aria-label={`${path.title} tracks`}><span className="section-kicker">LEARNING JOURNEY</span>{path.tracks.map((track, index) => <button type="button" className={`learn-track-option ${selectedTrack === track.id ? 'is-active' : ''}`} key={track.id} onClick={() => handleTrackChange(track.id)}><span className="learn-track-number">{index + 1}</span><span>{track.tab || track.title}</span><span className="learn-track-arrow">→</span></button>)}</nav><div className="learn-track-content">{selectedTrack === 'Overview' ? <div className="learn-track-intro"><span className="section-kicker">CHOOSE YOUR NEXT STEP</span><h3>Explore the {path.title} tracks.</h3><p>Select a track from the learning journey to see its courses and continue building your skills.</p></div> : <><span className="section-kicker">{selectedTrackData?.tab || selectedTrackData?.title}</span><h3>{selectedTrackData?.title}</h3><p className="learn-track-description">{selectedTrackData?.description}</p>{selectedTrack === 'frontend' && <strong className="frontend-course-count">{selectedTrackData.courses.length} Courses Available</strong>}<div className="path-course-grid">{displayedCourses.map((course) => <article className="path-course-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p>{course.progress > 0 && <div className="path-course-progress"><span style={{ width: `${course.progress}%` }} /></div>}<button type="button" className="button button-small" onClick={() => navigate(`/learn?search=${encodeURIComponent(course.title)}`)}>{course.progress >= 100 ? 'Completed' : course.progress > 0 ? 'Continue' : 'Start Course'} <span>→</span></button></div></article>)}{displayedCourses.length === 0 && <div className="learn-empty-state"><strong>No matching courses found</strong><p>Try another search term.</p></div>}</div></>}</div></div></section>
+  return <section className="selected-path-details"><div className="selected-path-header"><div><span className="section-kicker">SELECTED PATH</span><h2>{path.title}</h2><p>{path.description}</p></div><strong>{courseCount} Courses</strong></div><div className="learn-track-layout"><nav className="learn-track-navigation" aria-label={`${path.title} tracks`}><span className="section-kicker">LEARNING JOURNEY</span>{path.tracks.map((track, index) => <button type="button" className={`learn-track-option ${selectedTrack === track.id ? 'is-active' : ''}`} key={track.id} onClick={() => handleTrackChange(track.id)}><span className="learn-track-number">{index + 1}</span><span>{track.tab || track.title}</span><span className="learn-track-arrow">→</span></button>)}</nav><div className="learn-track-content">{selectedTrack === 'Overview' ? <div className="learn-track-intro"><span className="section-kicker">CHOOSE YOUR NEXT STEP</span><h3>Explore the {path.title} tracks.</h3><p>Select a track from the learning journey to see its courses and continue building your skills.</p></div> : <><span className="section-kicker">{selectedTrackData?.tab || selectedTrackData?.title}</span><h3>{selectedTrackData?.title}</h3><p className="learn-track-description">{selectedTrackData?.description}</p>{selectedTrack === 'frontend' && <strong className="frontend-course-count">{selectedTrackData.courses.length} Courses Available</strong>}<div className="path-course-grid">{displayedCourses.map((course) => <article className="path-course-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p>{course.progress > 0 && <div className="path-course-progress"><span style={{ width: `${course.progress}%` }} /></div>}<button type="button" className="button button-small" onClick={() => openCourse(course.title)}>{course.progress >= 100 ? 'Completed' : course.progress > 0 ? 'Continue' : 'Start Course'} <span>→</span></button></div></article>)}{displayedCourses.length === 0 && <div className="learn-empty-state"><strong>No matching courses found</strong><p>Try another search term.</p></div>}</div></>}</div></div></section>
 }
 
 function StaticLearnPage({ active, setActive }) {
@@ -812,7 +842,7 @@ function StaticLearnPage({ active, setActive }) {
     <section className="learn-hero"><div><span className="section-kicker">CODECRAFT LEARNING LIBRARY</span><h1>What do you want to build?</h1><p>Choose a learning path and start developing real-world skills.</p></div><div className="learn-hero-art"><span>&lt;/&gt;</span><span>JS</span><span>Py</span></div></section>
     <section className="learn-paths-section"><div className="section-header learn-section-heading"><div><span className="section-kicker">START HERE</span><h2>Learning Paths</h2><p>Choose a path and build the skills you need.</p></div></div><div className="learning-path-grid">{learningPaths.map((path) => { const count = path.tracks.reduce((total, track) => total + track.courses.length, 0); return <button type="button" className={`learning-path-card ${selectedPath === path.id ? 'is-selected' : ''}`} key={path.id} onClick={() => selectPath(path.id)}><span className="learning-path-icon" style={{ background: path.color }}>{path.icon}</span><div><h3>{path.title}</h3><p>{path.description}</p><strong>{count} courses</strong></div><span className="learning-path-action">{selectedPath === path.id ? 'Selected' : 'Explore Path'} <span>→</span></span></button> })}</div></section>
     {selectedPathData && <LearningPathDetailsLayout path={selectedPathData} selectedTrack={selectedTrack} onTrackChange={selectTrack} searchQuery={searchQuery} />}
-    <section className="learn-section popular-learn-section"><div className="section-header"><div><span className="section-kicker">TRENDING NOW</span><h2>Popular Courses</h2><p>Most in-demand courses right now.</p></div></div><div className="popular-learn-grid">{popularCourses.map((course) => <article className="popular-learn-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p><button type="button" className="button button-small" onClick={() => navigate(`/learn?search=${encodeURIComponent(course.title)}`)}>Start Course <span>→</span></button></div></article>)}</div></section>
+    <section className="learn-section popular-learn-section"><div className="section-header"><div><span className="section-kicker">TRENDING NOW</span><h2>Popular Courses</h2><p>Most in-demand courses right now.</p></div></div><div className="popular-learn-grid">{popularCourses.map((course) => <article className="popular-learn-card" key={course.title}><span className="path-course-icon" style={{ background: course.color }}>{course.icon}</span><div><h3>{course.title}</h3><p>{course.difficulty} <span>•</span> {course.lessons} lessons</p><button type="button" className="button button-small" onClick={() => openCourse(course.title)}>Start Course <span>→</span></button></div></article>)}</div></section>
     <section className="learn-section learning-journey-card"><span className="section-kicker">KEEP BUILDING</span><h2>Start Your Learning Journey</h2><p>Choose a path, take the next lesson, and keep turning your ideas into skills.</p><button type="button" className="button" onClick={() => selectPath('web-development')}>Explore Web Development <span>→</span></button></section>
   </div></div></main>
 }
@@ -3639,6 +3669,26 @@ function App() {
     }
 
     return <AdminControlCenter active={active} setActive={setActive} />
+  }
+
+  // Interactive course engine: /learn/course/<id> and /learn/course/<id>/lesson/<id>
+  const courseRoute = parseCourseRoute(path)
+  if (courseRoute) {
+    if (!isLoaded) {
+      return <div className="auth-loading">Loading your workspace...</div>
+    }
+
+    if (!isSignedIn) {
+      return <AuthPage initialModeOverride="login" />
+    }
+
+    if (accountAccess === null) return <div className="auth-loading">Checking your account access...</div>
+
+    if (courseRoute.lessonId) {
+      return <LessonWorkspace course={courseRoute.course} lessonId={courseRoute.lessonId} active={active} setActive={setActive} />
+    }
+
+    return <CourseOverview course={courseRoute.course} active="learn" setActive={setActive} />
   }
 
   if (protectedRoutes.has(path)) {

@@ -31,7 +31,8 @@ export default function MobileNavigation({ items, label = 'CodeCraft navigation'
     item.onSelect()
   }
 
-  const hasHeaderSearch = ['/', '/learn'].includes(window.location.pathname)
+  const currentPath = window.location.pathname
+  const hasHeaderSearch = currentPath === '/' || currentPath.startsWith('/learn')
 
   const trigger = (
     <button
